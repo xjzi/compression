@@ -11,7 +11,7 @@ pub struct Node {
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
         //Backwards ordering for min heap
-        other.val.cmp(&self.val)
+        other.freq.cmp(&self.freq)
     }
 }
 

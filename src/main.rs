@@ -10,6 +10,11 @@ fn main() {
     println!("The file is {} bytes.", text.len());
     let freq = get_freq(text);
     let res = code_huffman(&freq);
+    let mut res: Vec<(u8, BitVec)> = res.into_iter().collect();
+    res.sort_by_key(|a| freq.get(&a.0).unwrap());
+    for (val, code) in res.iter() {
+        println!("{} | freq: {} code: {}.", *val as char, freq.get(val).unwrap(), code);
+    }
 }
 
 fn compress_rle(input: &[u8]) -> Vec<u8> {
@@ -39,7 +44,7 @@ fn get_freq(input: &[u8]) -> HashMap<u8, u32> {
     map
 }
 
-fn code_huffman(freq: &HashMap<u8, u32>) ->  BitVec {
+fn code_huffman(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
     let mut heap: BinaryHeap<Box<Node>> = BinaryHeap::new();
 
     //Initially populate binary tree with nodes
@@ -66,5 +71,21 @@ fn code_huffman(freq: &HashMap<u8, u32>) ->  BitVec {
         } else { break i }
     };
 
-    BitVec::new()
+    let mut map: HashMap<u8, BitVec> = HashMap::new();
+    traverse_node(&mut map, &root, &mut BitVec::new());
+    map
+}
+
+fn traverse_node(map: &mut HashMap<u8, BitVec>, node: &Node, code: &mut BitVec) {
+    //Node will only have a value if it is a leaf
+    if let Some(val) = node.val {
+        map.insert(val, code.clone());
+    } else {
+        //Node will always have two children if it doesn't have a value
+        code.push(false);
+        traverse_node(map, &node.left.as_ref().unwrap(), code);
+        *code.last_mut().unwrap() = true;
+        traverse_node(map, &node.right.as_ref().unwrap(), code);
+        code.pop();
+    }
 }
