@@ -1,7 +1,9 @@
-use crate::node::Node;
+pub mod node;
+
 use std::collections::HashMap;
 use std::collections::BinaryHeap;
 use bitvec::prelude::*;
+use node::Node;
 
 fn traverse_node(map: &mut HashMap<u8, BitVec>, node: &Node, code: &mut BitVec) {
     //Node will only have a value if it is a leaf
@@ -17,7 +19,7 @@ fn traverse_node(map: &mut HashMap<u8, BitVec>, node: &Node, code: &mut BitVec) 
     }
 }
 
-pub fn huffman(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
+pub fn get_codes(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
     let mut heap: BinaryHeap<Box<Node>> = BinaryHeap::new();
 
     //Initially populate binary tree with nodes

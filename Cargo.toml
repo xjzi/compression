@@ -7,3 +7,14 @@ edition = "2018"
 
 [dependencies]
 bitvec = "0.22.3"
+
+[lib]
+name = "compression"
+path = "src/lib.rs"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "huffman"
+harness = false
