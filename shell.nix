@@ -1,15 +1,21 @@
-{ pkgs ? import <nixpkgs> { } }:
-pkgs.mkShell {
-  buildInputs = with pkgs; [
-    cargo
-    rustc
-    rustfmt
-    rustup
-    rust-analyzer
-  ];
-
-  # Certain Rust tools won't work without this
-  # This can also be fixed by using oxalica/rust-overlay and specifying the rust-src extension
-  # See https://discourse.nixos.org/t/rust-src-not-found-and-other-misadventures-of-developing-rust-on-nixos/11570/3?u=samuela. for more details.
-  RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
-}
+let
+  moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
+  nixpkgs = import <nixpkgs> { overlays = [ moz_overlay ]; };
+  rustStableChannel = nixpkgs.latest.rustChannels.stable.rust.override {
+    extensions = [
+      "rust-src"
+      "rls-preview"
+      "clippy-preview"
+      "rustfmt-preview"
+    ];
+  };
+in
+  with nixpkgs;
+  stdenv.mkDerivation {
+    name = "moz_overlay_shell";
+    buildInputs = [
+      rustStableChannel
+      rls
+      rustup
+    ];
+  }
