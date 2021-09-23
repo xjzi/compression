@@ -15,6 +15,7 @@ in
     name = "moz_overlay_shell";
     buildInputs = [
       rustStableChannel
+      gcc
       rls
       rustup
     ];
