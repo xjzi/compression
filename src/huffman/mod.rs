@@ -5,21 +5,40 @@ use std::collections::BinaryHeap;
 use bitvec::prelude::*;
 use node::Node;
 
-fn traverse_node(map: &mut HashMap<u8, BitVec>, node: &Node, code: &mut BitVec) {
-    //Node will only have a value if it is a leaf
+struct Out<'a> {
+    map: &'a mut HashMap<u8, BitVec>, 
+    buf: &'a mut BitVec<Lsb0, u8>, 
+    code: &'a mut BitVec
+}
+
+fn traverse_node(out: &mut Out, node: &Node) {
     if let Some(val) = node.val {
-        map.insert(val, code.clone());
+        //Node will only have a value if it is a leaf
+        //Add value to hashmap
+        out.map.insert(val, out.code.clone());
+        
+        //Write node to buffer
+        out.buf.push(true);
+        out.buf.append(&mut BitVec::<Lsb0, u8>::from_element(val));
     } else {
         //Node will always have two children if it doesn't have a value
-        code.push(false);
-        traverse_node(map, &node.left.as_ref().unwrap(), code);
-        *code.last_mut().unwrap() = true;
-        traverse_node(map, &node.right.as_ref().unwrap(), code);
-        code.pop();
+        //Write node to buffer
+        out.buf.push(false);
+
+        //Add false to code and call on left child
+        out.code.push(false);
+        traverse_node(out, &node.left.as_ref().unwrap());
+
+        //Replace with true and call on right child
+        *out.code.last_mut().unwrap() = true;
+        traverse_node(out, &node.right.as_ref().unwrap());
+
+        //Remove the extra added bit from the code
+        out.code.pop();
     }
 }
 
-pub fn get_codes(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
+pub fn get_tree(freq: &HashMap<u8, u32>) -> Node {
     let mut heap: BinaryHeap<Box<Node>> = BinaryHeap::new();
 
     //Initially populate binary tree with nodes
@@ -32,10 +51,15 @@ pub fn get_codes(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
         };
         heap.push(Box::from(node));
     }
-    
-    let root = loop {
+
+    //Combine nodes until there's one node left
+    loop {
+        //There will always be one node to pop
         let i = heap.pop().unwrap();
+
+        //There might be another node to pop
         if let Some(j) = heap.pop() {
+            //Push a parent node with the sum of their frequencies
             let node = Node {
                 freq: i.freq + j.freq,
                 left: Some(Box::from(i)),
@@ -43,11 +67,20 @@ pub fn get_codes(freq: &HashMap<u8, u32>) ->  HashMap<u8, BitVec> {
                 val: None
             };
             heap.push(Box::from(node));
-        } else { break i }
-    };
-
-    let mut map: HashMap<u8, BitVec> = HashMap::new();
-    traverse_node(&mut map, &root, &mut BitVec::new());
-    map
+        } else { 
+            //If there is only one node, then the tree is complete
+            break *i 
+        }
+    }
 }
 
+pub fn compress(freq: &HashMap<u8, u32>) {
+    let tree = get_tree(&freq);
+    let mut out = Out {
+        map: &mut HashMap::new(),
+        buf: &mut BitVec::new(),
+        code: &mut BitVec::new()
+    };
+    traverse_node(&mut out, &tree);
+//    println!("{:?}", out.buf);
+}
