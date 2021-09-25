@@ -1,4 +1,5 @@
 pub mod node;
+pub mod deserialize;
 
 use std::collections::HashMap;
 use std::collections::BinaryHeap;
@@ -82,5 +83,6 @@ pub fn compress(freq: &HashMap<u8, u32>) {
         code: &mut BitVec::new()
     };
     traverse_node(&mut out, &tree);
-//    println!("{:?}", out.buf);
+    let _tree = deserialize::build_tree(out.buf);
 }
+
