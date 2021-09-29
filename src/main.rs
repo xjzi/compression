@@ -2,6 +2,9 @@ use compression::huffman;
 use std::io::{self, Write, Read};
 use std::env;
 
+#[cfg(test)]
+mod test;
+
 fn main() {
     let mut buffer: Vec<u8> = Vec::new();
     io::stdin().read_to_end(&mut buffer).ok();
