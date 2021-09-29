@@ -1,5 +1,5 @@
 # Introduction
-Lossless compression algorithms implemented in Rust. Most underlying data structures are implemented by other libraries, including `std::HashMap` and `bitvec::vec::BitVec`. The `criterion` library is used for benchmarking, and the native testing library is used for testing. The logic is in the local library called `compression`. `main.rs` uses the library to take bytes from stdin and either compresses or decompress them, then prints the result to stdout. The error handling is not very robust, it will crash with an invalid file to decompress or an empty file. 
+Lossless compression algorithms implemented in Rust. Most underlying data structures are implemented by other libraries, including `std::HashMap` and `bitvec::vec::BitVec`. The `criterion` library is used for benchmarking, and the native testing library is used for testing. The logic is in the local library called `compression`. `main.rs` uses the library to take bytes from stdin and either compress or decompress them, then prints the result to stdout. The error handling is not very robust, it will crash with an invalid file to decompress or an empty file. 
 
 # Demonstration
 ```
