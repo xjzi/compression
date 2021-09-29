@@ -1,5 +1,6 @@
 # Tree Deserialization Format
-Each node starts with a bit to flag if the node has a value. If the node has a value, then the bit will be set to true and the following 8 bits will contain the value. Otherwise, the bit will be set to false and the node's children will follow. For example, consider the following tree. 
+The tree constructed by huffman coding is serialized to the beginning of the compressed file. After the tree is reconstructed, preorder traversal will be used to find values in the tree. 
+Each node starts with a bit to indicate if the node has a value. If the node has a value, the bit will be 1 and the following 8 bits will contain the value. Otherwise, the bit will be 0 and the node's children will follow. An example tree in JSON is shown below. 
 ```
 {
 	Value: null,
@@ -23,7 +24,7 @@ Each node starts with a bit to flag if the node has a value. If the node has a v
 	}
 }
 ```
-There is redundant information in this format because if there's a non null value, there can't be any children. In the binary format, a single bit marks whether there will be children or a value. The tree would serialize to the following string of bits, with annotations for clarity.
+The tree would serialize to the following string of bits, with text and indentation for clarity.
 ```
 has value: 0
 	left
