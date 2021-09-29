@@ -3,9 +3,6 @@ use std::io::{self, Write, Read};
 use std::env;
 
 fn main() {
-    //let text = include_bytes!("../corpus/alice.txt");
-    //test(text);
-
     let mut buffer: Vec<u8> = Vec::new();
     io::stdin().read_to_end(&mut buffer).ok();
     let args: Vec<String> = env::args().collect();

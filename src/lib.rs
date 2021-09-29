@@ -1,5 +1,4 @@
 pub mod huffman;
-pub mod rle;
 
 use bitvec::prelude::*;
 
