@@ -1,3 +1,4 @@
+#Demonstration
 ```
 cargo build --release
 
@@ -17,6 +18,7 @@ diff text_file $FILE
 less text_file
 ```
 
+#Motivation
 - Data structures are abstract and complex
 - Rust is fast and its syntax is logical 
 - Compression is useful and easily testable
