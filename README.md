@@ -35,3 +35,5 @@ du -h compressed_file
 - Github protects my code from my own mistakes
 - Other people can start from my knowledge
 
+# Future
+This project was short, and now I have some experience with data structures and implementing algorithms. I could implement a hashmap, binary heap, and bit vector to get some more experience, but I want to try out some other topics.
