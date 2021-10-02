@@ -14,11 +14,12 @@ cat $FILE | target/release/compression c > compressed_file
 # Decompress the compressed file
 cat compressed_file | target/release/compression d > text_file
 
-# There is no difference between the decompressed file and the original
-diff text_file $FILE
-
-# Or you can look at the decompressed file to make sure it's the same
+# Open the decompressed file to make sure it's correct
 less text_file
+
+# Compare the compressed size to the original
+du -h text_file
+du -h compressed_file
 ```
 
 # Motivation
