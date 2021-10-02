@@ -11,7 +11,7 @@ The error handling is not very robust, it will crash with an invalid file to dec
 cargo build --release
 
 # There are other files to test in ./corpus
-FILE=./corpus/alice.txt
+FILE=./corpus/alice29.txt
 
 # Make compressed file from file in corpus
 cat $FILE | target/release/compression c > compressed_file
