@@ -1,19 +1,19 @@
-use std::collections::HashMap;
 use std::collections::BinaryHeap;
 use bitvec::prelude::*;
 use super::node::Node;
+use std::convert::TryInto;
+use std::iter;
 
-fn get_freq(input: &[u8]) -> HashMap<u8, u32> {
-    let mut map: HashMap<u8, u32> = HashMap::new();
+fn get_freq(input: &[u8]) -> [u32; 256] {
+    let mut map: [u32; 256] = [0; 256]; 
     for val in input {
-        let entry = map.entry(*val).or_insert(0);
-        *entry = *entry + 1;
+        map[*val as usize] = map[*val as usize] + 1;
     }
     map
 }
 
 struct Out<'a> {
-    map: &'a mut HashMap<u8, BitVec>, 
+    map: &'a mut Vec<BitVec>,
     buf: &'a mut BitVec<Lsb0, u8>, 
     code: &'a mut BitVec
 }
@@ -22,7 +22,7 @@ fn traverse_node(out: &mut Out, node: &Node) {
     if let Some(val) = node.val {
         //Node will only have a value if it is a leaf
         //Add value to hashmap
-        out.map.insert(val, out.code.clone());
+        out.map[val as usize] = out.code.clone();
         
         //Write node to buffer
         out.buf.push(true);
@@ -45,15 +45,15 @@ fn traverse_node(out: &mut Out, node: &Node) {
     }
 }
 
-fn get_tree(freq: &HashMap<u8, u32>) -> Node {
+fn get_tree(freq: &[u32]) -> Node {
     let mut heap: BinaryHeap<Box<Node>> = BinaryHeap::new();
 
     //Initially populate binary tree with nodes
-    for (key, val) in freq.iter() {
+    for (count, val) in freq.iter().enumerate() {
        let node = Node {
           left: None,
           right: None,
-          val: Some(*key),
+          val: Some(count.try_into().unwrap()),
           freq: *val
         };
         heap.push(Box::from(node));
@@ -85,8 +85,11 @@ pub fn compress(bytes: &[u8]) -> BitVec<Lsb0, u8> {
     let freq = get_freq(&bytes);
     let tree = get_tree(&freq);
     let mut buf: BitVec<Lsb0, u8> = BitVec::new();
+    let mut map: Vec<_> = iter::repeat_with(|| BitVec::new())
+        .take(256)
+        .collect();
     let mut out = Out {
-        map: &mut HashMap::new(),
+        map: &mut map,
         buf: &mut buf,
         code: &mut BitVec::new()
     };
@@ -94,7 +97,7 @@ pub fn compress(bytes: &[u8]) -> BitVec<Lsb0, u8> {
 
     let mut coded: BitVec<Lsb0, u8> = BitVec::new();
     for byte in bytes {
-        let code = out.map.get(byte).unwrap();
+        let code = &out.map[*byte as usize];
         coded.append(&mut code.clone());
     }
 
