@@ -5,7 +5,7 @@ Lossless compression algorithms implemented in Rust.
 - Benchmarking uses the `criterion` crate.
 - Testing uses the native testing features.
 ## Structure 
-The logic is in the local library called `compression`. `main.rs` uses the library to take bytes from stdin and either compress or decompress them, then prints the result to stdout. Each compression algorithm is imported as a submodule of the `compression` library. 
+The logic is in the local library called `compression`. `main.rs` uses the library to take bytes from stdin and either compress or decompress them, then prints the result to stdout. There's only Huffman Coding, so nested directories are unnecessary. 
 The error handling is not very robust, it will crash with an invalid file to decompress or an empty file. 
 
 # Demonstration

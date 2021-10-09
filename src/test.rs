@@ -1,4 +1,4 @@
-use compression::huffman;
+use compression;
 use bitvec::prelude::*;
 
 #[test]
@@ -12,7 +12,7 @@ fn wrapper() {
 #[test]
 fn huffman() {
     let original = include_bytes!("../corpus/alice29.txt");
-    let compressed =  huffman::compress::compress(original);
-    let decompressed = huffman::decompress::decompress(compressed);
+    let compressed =  compression::compress::compress(original);
+    let decompressed = compression::decompress::decompress(compressed);
     assert_eq!(original, &decompressed[..]);
 }

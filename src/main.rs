@@ -1,4 +1,4 @@
-use compression::huffman;
+use compression;
 use std::io::{self, Write, Read};
 use std::env;
 
@@ -18,14 +18,14 @@ fn main() {
 }
 
 fn compress(bytes: &[u8]) {
-    let bits = huffman::compress::compress(bytes);
+    let bits = compression::compress::compress(bytes);
     let file = compression::wrap_bits(bits);
     io::stdout().write_all(&file).ok();
 }
 
 fn decompress(bytes: Vec<u8>) {
     let bits = compression::unwrap_bytes(bytes);
-    let bytes = huffman::decompress::decompress(bits);
+    let bytes = compression::decompress::decompress(bits);
     io::stdout().write_all(&bytes).ok();
 }
 
