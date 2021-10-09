@@ -16,10 +16,10 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("map bytes", |b| b.iter(|| compress::code(black_box(&bytes.clone()), black_box(&mut buf.clone()), black_box(&map))));
     
     let mut buf = compress::compress(bytes);
-    c.bench_function("deserialize tree", |b| b.iter(|| decompress::build_tree(black_box(&mut buf.clone()))));
-
+    c.bench_function("deserialize tree", |b| b.iter(|| decompress::build_tree(black_box(&mut buf.clone()), black_box(&mut 0))));
     //Removes header from buf
-    let tree = decompress::build_tree(&mut buf);
+    let tree = decompress::build_tree(&mut buf, &mut 0);
+
     c.bench_function("decode bitstream", |b| b.iter(|| decompress::decode(black_box(buf.clone()), black_box(&tree))));
 }
 

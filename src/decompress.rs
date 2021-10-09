@@ -1,11 +1,13 @@
 use super::node::Node; 
 use bitvec::prelude::*;
 
-pub fn build_tree(buf: &mut BitVec<Lsb0, u8>) -> Node {
-    //Pop the has_value flag from the front of the buffer
-    if buf.remove(0) {
+pub fn build_tree(buf: &mut BitVec<Lsb0, u8>, pos: &mut usize) -> Node {
+    let has_value = buf[*pos];
+    *pos = *pos + 1;
+    if has_value {
         //If the value flag is true, then the node is a leaf node with a value
-        let val: BitVec = buf.drain(..8).collect();
+        let val: &BitSlice<Lsb0, u8> = &buf[*pos..*pos + 8];
+        *pos = *pos + 8;
         let val = val.load::<u8>();
         return Node {
             left: None,
@@ -16,8 +18,8 @@ pub fn build_tree(buf: &mut BitVec<Lsb0, u8>) -> Node {
     } else {
         //If it's not a leaf node, then it will have two children following
         return Node {
-            left: Some(Box::from(build_tree(buf))),
-            right: Some(Box::from(build_tree(buf))),
+            left: Some(Box::from(build_tree(buf, pos))),
+            right: Some(Box::from(build_tree(buf, pos))),
             val: None,
             freq: 0
         }
@@ -46,7 +48,9 @@ pub fn decode(buf: BitVec<Lsb0, u8>, tree: &Node) -> Vec<u8> {
 }
 
 pub fn decompress(mut bits: BitVec<Lsb0, u8>) -> Vec<u8> {
+    let mut pos: usize = 0;
     //build_tree pops all bits associated with the tree
-    let tree = build_tree(&mut bits);
+    let tree = build_tree(&mut bits, &mut pos);
+    bits.drain(0..pos);
     decode(bits, &tree)
 }
