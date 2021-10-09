@@ -48,9 +48,12 @@ fn traverse_node(out: &mut Out, node: &Node) {
 fn get_tree(freq: &[u32]) -> Node {
     let mut heap: BinaryHeap<Box<Node>> = BinaryHeap::new();
 
+    //Removes bytes that are used 0 times 
+    let freq = freq.iter().enumerate().filter(|(_count, val)| **val != 0);
+
     //Initially populate binary tree with nodes
-    for (count, val) in freq.iter().enumerate() {
-       let node = Node {
+    for (count, val) in freq {
+        let node = Node {
           left: None,
           right: None,
           val: Some(count.try_into().unwrap()),
@@ -84,23 +87,32 @@ fn get_tree(freq: &[u32]) -> Node {
 pub fn compress(bytes: &[u8]) -> BitVec<Lsb0, u8> {
     let freq = get_freq(&bytes);
     let tree = get_tree(&freq);
+
+    //Will contain the serialized tree
     let mut buf: BitVec<Lsb0, u8> = BitVec::new();
-    let mut map: Vec<_> = iter::repeat_with(|| BitVec::new())
+
+    //Vector of 256 bitvecs
+    let mut map: Vec<BitVec> = iter::repeat_with(|| BitVec::new())
         .take(256)
         .collect();
+
     let mut out = Out {
         map: &mut map,
         buf: &mut buf,
         code: &mut BitVec::new()
     };
+
+    //Recursively populates map and serializes tree
     traverse_node(&mut out, &tree);
 
+    //Use map to compress each byte of input
     let mut coded: BitVec<Lsb0, u8> = BitVec::new();
     for byte in bytes {
         let code = &out.map[*byte as usize];
         coded.append(&mut code.clone());
     }
 
+    //Combine the serialized tree with the compressed content
     buf.append(&mut coded);
     buf
 } 
