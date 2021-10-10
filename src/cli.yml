@@ -1,0 +1,19 @@
+name: Compression
+about: Compresses and decompresses files using Huffman coding
+args:
+  - input-file:
+      short: i
+      help: File to read from. Defaults to stdin
+      takes_value: true
+  - output-file:
+      short: o
+      help: File to write to. Defaults to stdout
+      takes_value: true
+  - compress:
+      short: c 
+      help: compresses the file
+  - decompress:
+      short: d
+      help: decompresses the file
+settings:
+  - DisableVersion
