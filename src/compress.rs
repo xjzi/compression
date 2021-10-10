@@ -108,7 +108,7 @@ pub fn get_freq(input: &[u8]) -> [u32; 256] {
 pub fn code(bytes: &[u8], buf: &mut BitVec<Lsb0, u8>, map: &Vec<BitVec>) {
     for byte in bytes {
         let code = &map[*byte as usize];
-        buf.append(&mut code.clone());
+        buf.extend_from_bitslice(code);
     }
 }
 
