@@ -1,4 +1,4 @@
-# Introduction
+## Introduction
 Lossless compression algorithms implemented in Rust. 
 ## External Libraries
 - Prefix codes are stored using the `bitvec` crate.
@@ -9,7 +9,7 @@ Lossless compression algorithms implemented in Rust.
 The logic is in the local library called `compression`. `main.rs` uses the library to take bytes from stdin and either compress or decompress them, then prints the result to stdout. There's only Huffman Coding, so nested directories are unnecessary. 
 The error handling is not very robust, it will crash with an invalid file to decompress or an empty file. 
 
-# Demonstration
+## Demonstration
 ```
 cargo build --release
 
@@ -29,7 +29,7 @@ less text_file
 du -h compressed_file text_file
 ```
 
-# Motivation
+## Motivation
 - Data structures are ubiquitous 
 - Rust is fast and its syntax is logical 
 - Compression is useful and easily testable
@@ -37,5 +37,5 @@ du -h compressed_file text_file
 - Github protects my code from my own mistakes
 - Other people can start from my knowledge
 
-# Future
+## Future
 This project was short, and now I have some experience with data structures and implementing algorithms. I could implement a binary heap or bit vector to get some more experience, but I want to try out some other topics.
